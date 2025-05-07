@@ -4,18 +4,15 @@ namespace CF\Integration;
 
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
-use Psr\Log\LoggerInterface;
+use Stringable;
 
-class DefaultLogger extends AbstractLogger implements LoggerInterface
+class DefaultLogger extends AbstractLogger
 {
-    private $debug;
+    private bool $debug;
 
-    const PREFIX = '[Cloudflare]';
+    public const PREFIX = '[Cloudflare]';
 
-    /**
-     * @param bool|false $debug
-     */
-    public function __construct($debug = false)
+    public function __construct(bool $debug = false)
     {
         $this->debug = $debug;
     }
@@ -23,26 +20,26 @@ class DefaultLogger extends AbstractLogger implements LoggerInterface
     /**
      * Logs with an arbitrary level.
      *
-     * @param mixed  $level
-     * @param string $message
-     * @param array  $context
+     * @param \Psr\Log\LogLevel::* $level
+     * @param Stringable|string $message
+     * @param array $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, Stringable|string $message, array $context = []): void
     {
-        return error_log(self::PREFIX.' '.strtoupper($level).': '.$message.' '.
+        error_log(self::PREFIX . ' ' . strtoupper((string) $level) . ': ' . (string) $message . ' ' .
             (!empty($context) ? print_r($context, true) : ''));
     }
 
     /**
-     * Detailed debug information.
+     * Logs debug messages only if debug is enabled.
      *
-     * @param string $message
-     * @param array  $context
+     * @param Stringable|string $message
+     * @param array $context
      */
-    public function debug($message, array $context = array())
+    public function debug(Stringable|string $message, array $context = []): void
     {
         if ($this->debug) {
-            return $this->log(LogLevel::DEBUG, $message, $context);
+            $this->log(LogLevel::DEBUG, $message, $context);
         }
     }
 }
