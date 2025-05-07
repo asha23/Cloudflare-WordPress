@@ -1,6 +1,6 @@
 <?php
 
-namespace CF\WordPress\Test;
+namespace CF\Test\WordPress;
 
 use CF\Integration\DefaultIntegration;
 use CF\WordPress\Constants\Plans;
